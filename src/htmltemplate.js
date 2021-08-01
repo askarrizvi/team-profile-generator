@@ -1,4 +1,6 @@
+//Main function to generate the HTML code for the cards
 function generateCards(employees) {
+    //Create an array with the manager object
     const manager = employees.filter(employee => {
         if (employee.getRole() === "Manager") {
             return true;
@@ -8,6 +10,7 @@ function generateCards(employees) {
         }
     });
 
+    //Create an array with the engineer objects
     const engineerArr = employees.filter(employee => {
         if (employee.getRole() === "Engineer") {
             return true;
@@ -17,6 +20,7 @@ function generateCards(employees) {
         }
     });
 
+    //Create an array with the intern objects
     const internArr = employees.filter(employee => {
         if (employee.getRole() === "Intern") {
             return true;
@@ -26,46 +30,50 @@ function generateCards(employees) {
         }
     });
 
+    //Generate the HTML code for the manager card
     const managerCard = manager.map((mgr) => {
         return `
-        <div class="card" style="width: 18rem;">
+    <div class="card border-dark m-2" style="width: 18rem;">
     <div class="card-body">
     <h5 class="card-title">${mgr.getName()}</h5>
-    <h6 class="card-subtitle mb-2 text-muted">${mgr.getRole()}</h6>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <a href="#" class="card-link">Card link</a>
-    <a href="#" class="card-link">Another link</a>
+    <h6 class="card-subtitle mb-2 text-danger">${mgr.getRole()}</h6>
+    <h7 class="mb-2 text-muted">ID: ${mgr.getId()}</h7><br />
+    <h7 class="mb-2 text-muted">Email: <a href="mailto:${mgr.getEmail()}">${mgr.getEmail()}</a></h7><br />
+    <h7 class="mb-2 text-muted">Office: ${mgr.getOffice()}</h7><br />
     </div>
     </div>
         `;
     });
 
+    //Generate the HTML code for the engineer cards
     const engineerCards = engineerArr.map((eng) => {
         return `
-        <div class="card" style="width: 18rem;">
+        <div class="card border-dark m-2" style="width: 18rem;">
         <div class="card-body">
         <h5 class="card-title">${eng.getName()}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">${eng.getRole()}</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
+        <h6 class="card-subtitle mb-2 text-success">${eng.getRole()}</h6>
+        <h7 class="mb-2 text-muted">ID: ${eng.getId()}</h7><br />
+        <h7 class="mb-2 text-muted">Email: <a href="mailto:${eng.getEmail()}">${eng.getEmail()}</a></h7><br />
+        <h7 class="mb-2 text-muted">Github: <a href="https://github.com/${eng.getGithub()}">${eng.getGithub()}</a></h7><br />
         </div>
         </div>`
     });
 
+    //Generate the HTML code for the Intern cards
     const internCards = internArr.map((int) => {
         return `
-        <div class="card" style="width: 18rem;">
+        <div class="card border-dark m-2" style="width: 18rem;">
         <div class="card-body">
         <h5 class="card-title">${int.getName()}</h5>
-        <h6 class="card-subtitle mb-2 text-muted">${int.getRole()}</h6>
-        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="#" class="card-link">Card link</a>
-        <a href="#" class="card-link">Another link</a>
+        <h6 class="card-subtitle mb-2 text-primary">${int.getRole()}</h6>
+        <h7 class="mb-2 text-muted">ID: ${int.getId()}</h7><br />
+        <h7 class="mb-2 text-muted">Email: <a href="mailto:${int.getEmail()}">${int.getEmail()}</a></h7><br />
+        <h7 class="mb-2 text-muted">School: ${int.getSchool()}</h7><br />
         </div>
         </div>`
     });
 
+    //Return the final HTML code with all of the cards
     return `
     <section class="my-3" id="employees">
     <div class="d-flex flex-wrap justify-content-center">
@@ -77,12 +85,8 @@ function generateCards(employees) {
     `;
 }
 
+//Return the HTML code to be written to file
 module.exports = templateData => {
-    // destructure page data by section
-    //const { projects, about, ...header } = templateData;
-    console.log(templateData);
-
-
     return `
     <!DOCTYPE html>
     <html lang="en">

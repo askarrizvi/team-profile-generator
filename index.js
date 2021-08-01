@@ -70,6 +70,7 @@ const manQuestions = [
     },
 ];
 
+// Prompt to add Engineer
 const addEngineer = () => {
     return inquirer.prompt([
         {
@@ -131,6 +132,7 @@ const addEngineer = () => {
             choices: ['Engineer', 'Intern', 'Done'],
         },
     ]).then(engAnswers => {
+        // Push engineer to employees array and the user's next input
         employees.push(new Engineer(engAnswers.engName, engAnswers.engId, engAnswers.engEmail, engAnswers.engGit));
         if (engAnswers.employee === 'Engineer') {
             return addEngineer();
@@ -144,8 +146,8 @@ const addEngineer = () => {
     })
 };
 
+// Prompt to add Intern
 const addIntern = () => {
-    //console.log("start: "+employeeData);
     return inquirer.prompt([
         {
             type: 'input',
@@ -206,8 +208,8 @@ const addIntern = () => {
             choices: ['Engineer', 'Intern', 'Done'],
         },
     ]).then(intAnswers => {
+        // Push intern to employees array and check to see the next user input
         employees.push(new Intern(intAnswers.intName, intAnswers.intId, intAnswers.intEmail, intAnswers.intSchool));
-        //console.log("end: "+employeeData)
         if (intAnswers.employee === 'Engineer') {
             return addEngineer();
         }
@@ -232,7 +234,6 @@ function writeToFile(fileName, data) {
                 // return out of the function here to make sure the Promise doesn't accidentally execute the resolve() function as well
                 return;
             }
-
             // if everything went well, resolve the Promise and send the successful data to the `.then()` method
             resolve({
                 ok: true,
@@ -245,14 +246,15 @@ function writeToFile(fileName, data) {
 // A function to initialize app
 function init() {
     employees = [];
+    //Ask for manager to start the team
     inquirer.prompt(manQuestions)
         .then(manAnswers => {
+            //Call the next function depending on what the user selects
             employees.push(new Manager(manAnswers.manName, manAnswers.manId, manAnswers.manEmail, manAnswers.manOff));
             if (manAnswers.employee === 'Engineer') {
                 addEngineer()
                     .then(() => {
-                        //TODO Call HTML generation generatehtml(employees)
-                        //console.log(employees);
+                        // Call HTML generation generatehtml(employees)
                         return generatePage(employees);
                     })
                     .then(htmldata => {
@@ -262,20 +264,18 @@ function init() {
             else if (manAnswers.employee === 'Intern') {
                 addIntern()
                     .then(() => {
-                        //TODO Call HTML generation generatehtml(employees)
+                        //Call HTML generation generatehtml(employees)
                         return generatePage(employees);
                     })
                     .then(htmldata => {
                         writeToFile("index", htmldata);
                     })
             }
+            //If the user selects none, then write to file
             else if (manAnswers.employee === 'Done') {
-                //TODO Call HTML generation generatehtml(employees)
+                //Call HTML generation generatehtml(employees)
                 writeToFile("index",generatePage(employees));
             }
-
-            //writeToFile("index", generateReadme(answers));
-            //console.log("Readme generated!");
         })
 
 }
