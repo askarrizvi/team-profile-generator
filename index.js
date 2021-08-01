@@ -1,6 +1,12 @@
 // Include packages needed for this application
 const inquirer = require('inquirer');
 const fs = require('fs');
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Intern = require('./lib/Intern');
+const generatePage = require('./src/htmltemplate');
+
+var employees;
 
 // An array of questions for user input
 const manQuestions = [
@@ -60,14 +66,11 @@ const manQuestions = [
         type: 'list',
         message: 'Choose an employee to add to the team',
         name: 'employee',
-        choices: ['Engineer', 'Intern'],
+        choices: ['Engineer', 'Intern', 'Done'],
     },
 ];
 
-const addEngineer = employeeData => {
-    if(!employeeData){
-        employeeData = [];
-    }
+const addEngineer = () => {
     return inquirer.prompt([
         {
             type: 'input',
@@ -99,8 +102,8 @@ const addEngineer = employeeData => {
             type: 'input',
             name: 'engEmail',
             message: "What is the engineer's email? (Required)",
-            validate: (manEmail) => {
-                if (manEmail) {
+            validate: (engEmail) => {
+                if (engEmail) {
                     return true;
                 } else {
                     console.log("Please enter the engineer's email!");
@@ -128,23 +131,20 @@ const addEngineer = employeeData => {
             choices: ['Engineer', 'Intern', 'Done'],
         },
     ]).then(engAnswers => {
-        employeeData.push(engAnswers);
-        if (engAnswers.employee === 'Engineer'){
-            return addEngineer(employeeData);
+        employees.push(new Engineer(engAnswers.engName, engAnswers.engId, engAnswers.engEmail, engAnswers.engGit));
+        if (engAnswers.employee === 'Engineer') {
+            return addEngineer();
         }
-        else if (engAnswers.employee === 'Intern'){
-            return addIntern(employeeData);
+        else if (engAnswers.employee === 'Intern') {
+            return addIntern();
         }
-        else if (engAnswers.employee === 'Done'){
-            return employeeData;
+        else if (engAnswers.employee === 'Done') {
+            return;
         }
     })
 };
 
-const addIntern = employeeData => {
-    if(!employeeData){
-        employeeData = [];
-    }
+const addIntern = () => {
     //console.log("start: "+employeeData);
     return inquirer.prompt([
         {
@@ -206,26 +206,26 @@ const addIntern = employeeData => {
             choices: ['Engineer', 'Intern', 'Done'],
         },
     ]).then(intAnswers => {
-        employeeData.push(intAnswers);
+        employees.push(new Intern(intAnswers.intName, intAnswers.intId, intAnswers.intEmail, intAnswers.intSchool));
         //console.log("end: "+employeeData)
-        if (intAnswers.employee === 'Engineer'){
-            return addEngineer(employeeData);
+        if (intAnswers.employee === 'Engineer') {
+            return addEngineer();
         }
-        else if (intAnswers.employee === 'Intern'){
-            return addIntern(employeeData);
+        else if (intAnswers.employee === 'Intern') {
+            return addIntern();
         }
-        else if (intAnswers.employee === 'Done'){
-            return employeeData;
+        else if (intAnswers.employee === 'Done') {
+            return;
         }
     })
 };
 
 
-/*
+
 // A function to write README file
 function writeToFile(fileName, data) {
     return new Promise((resolve, reject) => {
-        fs.writeFile(fileName + '.md', data, err => {
+        fs.writeFile('./dist/' + fileName + '.html', data, err => {
             // if there's an error, reject the Promise and send the error to the Promise's `.catch()` method
             if (err) {
                 reject(err);
@@ -240,25 +240,42 @@ function writeToFile(fileName, data) {
             });
         });
     });
-}*/
+}
 
 // A function to initialize app
 function init() {
+    employees = [];
     inquirer.prompt(manQuestions)
         .then(manAnswers => {
+            employees.push(new Manager(manAnswers.manName, manAnswers.manId, manAnswers.manEmail, manAnswers.manOff));
             if (manAnswers.employee === 'Engineer') {
-                console.log("engineer");
                 addEngineer()
-                .then(employeeData => {
-                    console.log(employeeData);
-                })
+                    .then(() => {
+                        //TODO Call HTML generation generatehtml(employees)
+                        //console.log(employees);
+                        return generatePage(employees);
+                    })
+                    .then(htmldata => {
+                        writeToFile("index", htmldata);
+                    })
             }
             else if (manAnswers.employee === 'Intern') {
-                console.log("intern");
+                addIntern()
+                    .then(() => {
+                        //TODO Call HTML generation generatehtml(employees)
+                        return generatePage(employees);
+                    })
+                    .then(htmldata => {
+                        writeToFile("index", htmldata);
+                    })
+            }
+            else if (manAnswers.employee === 'Done') {
+                //TODO Call HTML generation generatehtml(employees)
+                writeToFile("index",generatePage(employees));
             }
 
-            // writeToFile("README", generateReadme(answers));
-            // console.log("Readme generated!");
+            //writeToFile("index", generateReadme(answers));
+            //console.log("Readme generated!");
         })
 
 }
