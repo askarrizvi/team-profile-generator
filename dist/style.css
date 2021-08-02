@@ -1,0 +1,8 @@
+/**Formatting for the header at the top of the page**/
+.navbar-header {
+    float: left;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+}
+.navbar-brand {float:none;}
