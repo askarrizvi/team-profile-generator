@@ -39,5 +39,3 @@ Licensed under GNU GPLv3
 
 ## Questions
 https://github.com/askarrizvi <br />
-If you have any further questions, you can reach me at: <br />
-askarrizvi88@gmail.com
